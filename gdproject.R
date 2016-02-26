@@ -7,6 +7,19 @@ parse.dd <- function (.path) {
                                       strip.white = T, 
                                       comment.char = "", 
                                       quote = ""))
+    names(df)[1:11] <- c("Read.count", 
+                      "Read.proportion",
+                      "CDR3.nucleotide.sequence",
+                      "CDR3.amino.acid.sequence",
+                      "V.gene", "D.gene", "J.gene",
+                      "V.end", "D5.end", "D3.end", "J.start")
+    df$Umi.count <- df$Read.count
+    df$Umi.proportion <- df$Read.proportion
+    
+    logic <- df$V.end != -1 & df$D5.new1 != -1
+    df$VD1.insertions <- -1
+    df$VD1.insertions[logic] <- df$D5.new1 - df$VD1.insertions
+    
     df
   }
   
