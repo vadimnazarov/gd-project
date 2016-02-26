@@ -16,9 +16,9 @@ parse.dd <- function (.path) {
     df$Umi.count <- df$Read.count
     df$Umi.proportion <- df$Read.proportion
     
-    logic <- df$V.end != -1 & df$D5.new1 != -1
+    logic <- (df$V.end != -1) & (df$D5.new1 != -1)
     df$VD1.insertions <- -1
-    df$VD1.insertions[logic] <- df$D5.new1 - df$VD1.insertions
+    df$VD1.insertions[logic] <- df$D5.new1 - df$V.end - 1
     
     df
   }
