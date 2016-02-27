@@ -30,51 +30,38 @@ parse.dd <- function (.path) {
     df <- .add.one(df, "D3.new3")
     df <- .add.one(df, "J.start")
     
-    .sum <- function (.left, .right) {
-      .left[.left == -1] <- 0
-      .right[.right == -1] <- 0
-      res <- .right - .left - 1
-      res[res < 0] <- 0
-      res
-    }
-    
-    # V J
-    # V D1 J
-    # V D1 D2 J
-    # V D1 D2 D3 J
-    # logic <- ((df$V.end >= df$D5.new1) && (df$D5.new1 != -1)) | 
-    #   ((df$D3.new1 >= df$D5.new2) && (df$D3.new2 != -1)) | 
-    #   ((df$D3.new2 >= df$D5.new3) && (df$D3.new3 != -1)) | 
-    #   ((df$D3.new3 >= df$J.start) && (df$D3.new3 != -1))
-    
     df$Total.insertions <- -1
     for (i in 1:nrow(df)) {
       acc <- 0
       if (df$D5.new1[i] != -1) {
         if (df$V.end[i] >= df$D5.new1[i]) {
-          acc <- -2
+          acc <- -11
         } else {
           acc <- df$D5.new1[i] - df$V.end[i] - 1
           
           if (df$D5.new2[i] != -1) {
-            acc <- acc + df$D5.new2[i] - df$D3.new1[i] - 1
-            
-            if (df$D5.new3[i] != -1) {
-              if (df$J.start[i] <= df$D3.new3[i]) {
-                acc <- -2
-              } else {
-                acc <- acc + df$D5.new3[i] - df$D3.new2[i] - 1
-              }
+            if (df$D3.new1[i] >= df$D5.new2[i]) {
+              acc <- -12
             } else {
-              if (df$J.start[i] <= df$D3.new2[i]) {
-                acc <- -2
+              acc <- acc + df$D5.new2[i] - df$D3.new1[i] - 1
+              
+              if (df$D5.new3[i] != -1) {
+                if (df$D3.new2[i] >= df$D5.new3[i] || df$J.start[i] <= df$D3.new3[i]) {
+                  acc <- -13
+                } else {
+                  acc <- acc + df$D5.new3[i] - df$D3.new2[i] - 1 + df$J.start[i] - df$D3.new3[i] - 1
+                }
               } else {
-                acc <- acc + df$J.start[i] - df$D3.new2[i] - 1
+                if (df$J.start[i] <= df$D3.new2[i]) {
+                  acc <- -14
+                } else {
+                  acc <- acc + df$J.start[i] - df$D3.new2[i] - 1
+                }
               }
             }
           } else {
             if (df$J.start[i] <= df$D3.new1[i]) {
-              acc <- -2
+              acc <- -15
             } else {
               acc <- acc + df$J.start[i] - df$D3.new1[i] - 1
             }
